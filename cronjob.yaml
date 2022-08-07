@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: gh-stars-backup
+spec:
+  schedule: "5 13 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: gh-stars-backup
+              image: nospamplease/gh-stars-backup
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
+                - /gh-stars-backup
+              env:
+                - name: GH_PAT
+                  value: <your_pat_token>
+          restartPolicy: OnFailure

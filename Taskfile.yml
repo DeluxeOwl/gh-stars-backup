@@ -1,0 +1,9 @@
+version: "3"
+
+tasks:
+  build:
+    cmds:
+      - CGO_ENABLED=0 go build -o gh-stars-backup ./main.go
+  build-docker:
+    cmds:
+      - docker build -t gh-stars-backup .
