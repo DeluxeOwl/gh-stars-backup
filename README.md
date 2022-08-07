@@ -2,7 +2,7 @@
 
 ### Why?
 
-I needed a way to backup all my starred repositories from github.
+I needed a way to backup all my starred repositories from Github in case they'll be taken down or made private.
 
 ### What?
 
