@@ -1,14 +1,14 @@
 # gh-stars-backup
 
-## Why?
+### Why?
 
 I needed a way to backup all my starred repositories from github.
 
-## What?
+### What?
 
 This binary clones (pulls if they're already cloned) all your starred repos from github.
 
-## How?
+### How?
 
 The binary lists all your starred repositories and calls `git clone` for each of them.  
 If they already exist, it calls `git pull` instead.
@@ -72,6 +72,10 @@ docker run -v `pwd`/test:/ghstars nospamplease/gh-stars-backup -gh-pat=<your_pat
 ```
 
 ## As a cronjob in kubernetes
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/DeluxeOwl/gh-stars-backup/main/cronjob.yaml
+```
 
 ```yaml
 apiVersion: batch/v1
