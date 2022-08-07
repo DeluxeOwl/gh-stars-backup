@@ -19,6 +19,11 @@ If they already exist, it calls `git pull` instead.
 - you will need a Github PAT (personal access token) with scope `repo` and `user`.
   - [creating a github PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
+# Installation
+
+- if you have go installed: `go install github.com/DeluxeOwl/gh-stars-backup@latest`
+- install the binary for your OS from the [github releases tab](https://github.com/DeluxeOwl/gh-stars-backup/releases).
+
 # Usage
 
 ```sh
@@ -39,12 +44,8 @@ Usage of gh-stars-backup:
 ```
 
 It also takes the flags as environment variables if available, transform the flags to uppercase (ex: `CLONE_ARGS`)
-example usage:
 
 ## As a binary
-
-You can install the binary for your OS from the [github releases tab](https://github.com/DeluxeOwl/gh-stars-backup/releases).
-
 
 ```sh
 ./gh-stars-backup -gh-pat=<your_pat_token> -clone-args="--depth 1" -dir-format="{{.RepoName}}_{{.RepoAuthor}}" -output-dir="./ghbackup" | tee out.txt
@@ -55,8 +56,6 @@ GH_PAT=<my_pat_token> ./gh-stars-backup
 ![](img/usage.png)
 
 ## As a docker image
-
-**note:** only for x86
 
 ```sh
 docker build -t gh-stars-backup .
@@ -98,3 +97,7 @@ spec:
                   value: <your_pat_token>
           restartPolicy: OnFailure
 ```
+
+# Development
+
+I use [taskfile](https://taskfile.dev/) as a glorified command runner.
