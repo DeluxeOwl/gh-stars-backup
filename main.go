@@ -165,10 +165,10 @@ func cloneRepo(repoFullName, cloneUrl, dir, cloneArgs string) {
 		cloneCmd = exec.Command("git", splitArgs...)
 	}
 
-	_, err := cloneCmd.Output()
+	out, err := cloneCmd.Output()
 
 	if err != nil {
-		log.Printf("error when cloning %s: %v\n", repoFullName, err)
+		log.Printf("error when cloning %s: %v\n%s\n", repoFullName, err, string(out))
 		return
 	}
 
@@ -200,7 +200,7 @@ func pullRepo(repoFullName, cloneUrl, dir, pullArgs string) {
 	}
 
 	if err != nil {
-		log.Printf("error when pulling %s: %v\n", repoFullName, err)
+		log.Printf("error when pulling %s: %v\n%s\n", repoFullName, err, string(out))
 		return
 	}
 
