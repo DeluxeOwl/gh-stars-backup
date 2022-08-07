@@ -43,6 +43,9 @@ example usage:
 
 ## As a binary
 
+You can install the binary for your OS from the [github releases tab](https://github.com/DeluxeOwl/gh-stars-backup/releases).
+
+
 ```sh
 ./gh-stars-backup -gh-pat=<your_pat_token> -clone-args="--depth 1" -dir-format="{{.RepoName}}_{{.RepoAuthor}}" -output-dir="./ghbackup" | tee out.txt
 # or with an env variable only

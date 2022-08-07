@@ -1,4 +1,4 @@
-module gh-stars-backup
+module github.com/DeluxeOwl/gh-stars-backup
 
 go 1.18
 
