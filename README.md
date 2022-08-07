@@ -53,6 +53,8 @@ GH_PAT=<my_pat_token> ./gh-stars-backup
 
 ## As a docker image
 
+**note:** only for x86
+
 ```sh
 docker build -t gh-stars-backup .
 
