@@ -17,6 +17,16 @@ import (
 	"golang.org/x/oauth2"
 )
 
+type BackupOptions struct {
+	limit     int
+	pullArgs  string
+	cloneArgs string
+	client    *github.Client
+	tmpl      template.Template
+	ghPAT     string
+	outputDir string
+}
+
 func main() {
 
 	log.SetOutput(os.Stdout)
@@ -29,6 +39,7 @@ func main() {
 		pullArgs  = fs.String("pull-args", "", "arguments for git pull")
 		cloneArgs = fs.String("clone-args", "", "arguments for git clone")
 		outputDir = fs.String("output-dir", "./", "the directory where the repos will be saved")
+		// org       = fs.String("org", "", "backup the organization repos")
 	)
 
 	err := ff.Parse(fs, os.Args[1:],
@@ -66,15 +77,32 @@ func main() {
 	tc := oauth2.NewClient(ctx, ts)
 	client := github.NewClient(tc)
 
+	opts := &BackupOptions{
+		client:    client,
+		limit:     *limit,
+		pullArgs:  *pullArgs,
+		cloneArgs: *cloneArgs,
+		tmpl:      *tmpl,
+		ghPAT:     *ghPAT,
+		outputDir: *outputDir,
+	}
+
+	backupStarredRepos(opts)
+
+}
+
+func backupStarredRepos(bo *BackupOptions) {
 	opts := &github.ActivityListStarredOptions{
 		ListOptions: github.ListOptions{PerPage: 100},
 	}
+
+	ctx := context.Background()
 
 	// get a list of all the starred repositories
 	var starredRepos []*github.StarredRepository
 
 	for {
-		repos, resp, err := client.Activity.ListStarred(ctx, "", opts)
+		repos, resp, err := bo.client.Activity.ListStarred(ctx, "", opts)
 
 		switch err.(type) {
 		case *github.RateLimitError:
@@ -99,9 +127,9 @@ func main() {
 	// clone or pull the repos
 	wg := &sync.WaitGroup{}
 	defer wg.Wait()
-	limiter := make(chan struct{}, *limit)
+	limiter := make(chan struct{}, bo.limit)
 
-	cloneWithTokenPrefix := "https://" + *ghPAT + "@"
+	cloneWithTokenPrefix := "https://" + bo.ghPAT + "@"
 
 	for _, r := range starredRepos {
 
@@ -125,7 +153,7 @@ func main() {
 
 			var repoDir bytes.Buffer
 
-			err := tmpl.Execute(&repoDir, struct {
+			err := bo.tmpl.Execute(&repoDir, struct {
 				RepoAuthor string
 				RepoName   string
 			}{
@@ -137,18 +165,16 @@ func main() {
 				log.Panicf("couldn't parse into template: %s %s\n", author, name)
 			}
 
-			dir := *outputDir + "/" + repoDir.String()
+			dir := bo.outputDir + "/" + repoDir.String()
 
 			if _, err := os.Stat(dir); os.IsNotExist(err) {
-				cloneRepo(rfn, cloneUrl, dir, *cloneArgs)
+				cloneRepo(rfn, cloneUrl, dir, bo.cloneArgs)
 			} else {
-				pullRepo(rfn, cloneUrl, dir, *pullArgs)
+				pullRepo(rfn, cloneUrl, dir, bo.pullArgs)
 			}
 
 		}(r)
-
 	}
-
 }
 
 func cloneRepo(repoFullName, cloneUrl, dir, cloneArgs string) {
